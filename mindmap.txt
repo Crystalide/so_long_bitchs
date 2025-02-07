@@ -1,0 +1,85 @@
+1. background
+2. map (walls + start + exit + collectibles)
+3. player
+
+Map checklist
+
+Parse the map
+When parsing the map you can already check some errors before even going further
+
+Does the map file exist ?
+
+Is the map rectangular ?
+	All the lines should be the same length.
+
+Is there something in the map file ?
+
+Is the map enclosed in walls ?
+	Check the first and last lines and columns, they should all be 1.
+
+Is there only one exit ?
+	Simply count how many E you find on the map.
+
+
+Is there only one start position ?
+	Simply count how many P you find on the map.
+
+
+Is there at least one collectibles ?
+	Simply count how many C you find on the map.
+
+Is the exit accessible from the start position?
+Are all the collectibles accessible from the start position?
+
+
+Game checklist
+
+Create a window using MLX.
+	Create the required structure to store all the necessary information.
+
+Load all the required sprites (images) for your game and store them into memory.
+
+Create the different hooks.
+	key_handler
+	mouse_handler (if necessary)
+	close_handler, this is a hook on the red cross that closes the program correctly
+	loop_hook (=> you game loop)
+
+
+Render checklist
+
+Draw the background.
+
+Draw the not movable parts of the map.
+
+Draw the player.
+
+
+Key handler
+key handler mainly used to call update_player_position function when WASD is pressed
+or to close the program correctly when pressing ESC key.
+
+
+Is the requested new position a Wall ?
+	if yes, do nothing. subject says player can't go through walls
+
+Is the requested new position inside the map?
+	if no, do nothing. shouldn't happen since enclosed map but you never know.
+
+Is the requested new position a Collectible ?
+	if yes, update the collected items counter and check
+		check if all collectibles have been collected
+			if yes, unlock the exit
+		update map 2D array and replace collectible by floor tile so not drawn in next iteration of the game loop.
+
+If the requested new position is not a wall, a collectible, nor outside the map, simply set the player position to the requested new position.
+
+
+We found some segfaults:
+With a map with only 1 wall in it and nothing else,
+when there are no wolves and we close the map through ESC or close.
+When there is no collectible but there is a valid path, the error message can be more clear.
+We talked about the difference of return values in the main function and other functions, EXIT_SUCCESS and when to return 0 or 1.
+When there is no P, no E or no C, the program continues and later segfaults. Handle this in the map validation. You could also check the size of the map earlier.
+When the player has to go through the end to get to the collectable, I think this map has no valid path.
+When a wolf is temporarily blocking the road, I think a map should still be valid.
