@@ -28,7 +28,7 @@ MLXFLAGS = -Iinclude -Ilibft -IMLX42/include \
 # SAN = -fsanitize=address,bounds,undefined -g3
 
 # Building the final executable
-all: $(NAME)
+all: $(MLX42_DIR) $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(LIBMLX42)
 	$(CC) $(OBJS) $(LIBFT) $(LIBMLX42) $(MLXFLAGS) -o $(NAME)
@@ -65,7 +65,7 @@ clean:
 fclean:		clean
 			rm -f a.out $(NAME)
 			$(MAKE) fclean -C libft
-			rm -rf MLX42/build
+			rm -rf $(MLX42_DIR)
 
 re:			fclean all
 
