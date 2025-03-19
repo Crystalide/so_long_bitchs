@@ -31,6 +31,18 @@ Is there at least one collectibles ?
 Is the exit accessible from the start position?
 Are all the collectibles accessible from the start position?
 
+if (all_collectables_collected && exit_count == 1)
+	return map_valid;
+if (on_wall)
+	return map_invalid;
+if (on_collectable)
+	collectables++;
+if (on_exit)
+	exits++;
+replace_current_position_with_wall;
+if (one_of_the_four_adjacent_directions_is_possible)
+	return map_valid;
+return map_invalid;
 
 Game checklist
 
@@ -73,7 +85,9 @@ Is the requested new position a Collectible ?
 		update map 2D array and replace collectible by floor tile so not drawn in next iteration of the game loop.
 
 If the requested new position is not a wall, a collectible, nor outside the map, simply set the player position to the requested new position.
-
+Is the next move valid?
+Does the next move cause a special event
+	(either winning the game, collecting a collectable, or in the case of a bonus, hitting an enemy)?
 
 We found some segfaults:
 With a map with only 1 wall in it and nothing else,

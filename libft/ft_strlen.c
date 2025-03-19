@@ -6,7 +6,7 @@
 /*   By: ndufourn <ndufourn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 12:09:55 by ndufourn          #+#    #+#             */
-/*   Updated: 2024/11/18 15:57:34 by ndufourn         ###   ########.fr       */
+/*   Updated: 2025/03/19 15:20:49 by ndufourn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ size_t	ft_strlen(const char *str)
 	size_t	n;
 
 	n = 0;
+	if (!str)
+		return (0);
 	while (*str++)
 		n++;
 	return (n);

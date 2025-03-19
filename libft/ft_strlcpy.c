@@ -6,7 +6,7 @@
 /*   By: ndufourn <ndufourn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 12:09:54 by ndufourn          #+#    #+#             */
-/*   Updated: 2024/10/24 18:04:47 by ndufourn         ###   ########.fr       */
+/*   Updated: 2025/03/19 15:21:16 by ndufourn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 	const char	*temp;
 	size_t		length_src;
 
+	if (!src)
+		return (0);
 	temp = src;
 	length_src = 0;
 	while (*temp++ != '\0')
