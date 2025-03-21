@@ -6,7 +6,7 @@
 /*   By: ndufourn <ndufourn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 12:10:12 by ndufourn          #+#    #+#             */
-/*   Updated: 2025/03/19 15:03:40 by ndufourn         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:44:31 by ndufourn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putendl_fd(char *str, int fd);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_putstr_fd(char *str, int fd);
+void	*ft_realloc(void *ptr, size_t size, size_t new_size);
 char	**ft_split(char const *str, char c);
 char	*ft_strchr(const char *str, int c);
 char	*ft_strdup(const char *str);
