@@ -1,3 +1,5 @@
+CREATE REALLOC
+
 1. background
 2. map (walls + start + exit + collectibles)
 3. player

@@ -6,7 +6,7 @@
 /*   By: ndufourn <ndufourn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:34 by ndufourn          #+#    #+#             */
-/*   Updated: 2025/03/19 18:15:44 by ndufourn         ###   ########.fr       */
+/*   Updated: 2025/03/21 14:56:41 by ndufourn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main(void)
 }
 
 // Scales the texture to the window.
-//Let's say:
+// Let's say:
 // The texture is 200 × 200 pixels. The window is 400 × 400 pixels.
 // The goal is to stretch the 200 × 200 texture to fill the 400 × 400 window.
 // If we're at window position (i, j) = (100, 100), the calculation would be:
