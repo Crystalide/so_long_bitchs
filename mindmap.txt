@@ -4,6 +4,55 @@ CREATE REALLOC
 2. map (walls + start + exit + collectibles)
 3. player
 
+Pseudocode
+1. Read and parse the map
+Open map.ber file.
+Read the contents of the file into a buffer.
+Split the buffer into lines and store them in a 2D array (representing the map).
+
+2. Validate the map
+Check if the map is rectangular:
+Every row must have the same length.
+
+Check if the map is surrounded by walls:
+First and last row must be all '1'.
+First and last character of each row must be '1'.
+
+Check for required components:
+Exactly 1 player start 'P'.
+Exactly 1 exit 'E'.
+At least 1 collectible 'C'.
+Display error if any requirement is not met.
+
+3. Check for a valid path
+Create a copy of the map for pathfinding.
+Use Flood Fill algorithm:
+Start at the player’s starting position 'P'.
+
+Recursively explore neighboring cells:
+Stop if you hit a wall or an already visited cell.
+Check if all collectibles 'C' and the exit 'E' are reachable.
+If the path is invalid, display an error.
+
+4. Render the map
+Load textures for:
+Wall ('1')
+Collectible ('C')
+Free space ('0')
+Exit ('E')
+Player ('P')
+
+Loop through the map array:
+Place the corresponding texture at the correct position on the window.
+
+5. Start the game loop
+Register key hooks for movement.
+
+Handle window closing.
+Start the MLX loop.
+
+
+
 Map checklist
 
 Parse the map

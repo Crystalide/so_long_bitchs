@@ -1,5 +1,8 @@
 # Source files
-SRCS	=	so_long.c
+SRCS	=	so_long.c \
+			so_long_init_structs.c \
+			so_long_map_read_parse.c \
+			so_long_map_validate.c
 SRCS_BON =
 
 ifeq ($(BONUS), 1)
