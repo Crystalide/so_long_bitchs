@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long_map_read&parse.c                           :+:      :+:    :+:   */
+/*   so_long_map_read_parse.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ndufourn <ndufourn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 19:07:36 by ndufourn          #+#    #+#             */
-/*   Updated: 2025/04/01 19:08:41 by ndufourn         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:26:44 by ndufourn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-char	**ft_read_map(const char *map_file)
+char	**ft_read_map(t_game *game, const char *map_file)
 {
 	int				fd_map;
 	char			*line;
@@ -49,5 +49,9 @@ char	**ft_read_map(const char *map_file)
 	}
 	map[i] = NULL;
 	close(fd_map);
+	game->map.map_width = i;
+	if (i > 0)
+		game->map.map_height = ft_strlen(map[0]);
+	game->map.map = map;
 	return (map);
 }

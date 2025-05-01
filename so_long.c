@@ -6,61 +6,100 @@
 /*   By: ndufourn <ndufourn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 14:31:34 by ndufourn          #+#    #+#             */
-/*   Updated: 2025/04/03 15:25:40 by ndufourn         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:22:13 by ndufourn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/include/MLX42/MLX42.h"
 #include "so_long.h"
 
+void	ft_initialize_game(t_game *game)
+{
+	game->img_width = 1080;
+	game->img_height = 720;
+	
+	game->player = malloc(sizeof(t_player_data));
+	if (!game->player)
+		return (perror("Error: Failed to allocate player memory"));
+	
+	game->player->player_x = 0;
+	game->player->player_y = 0;
+	game->player->collected_collectibles = 0;
+
+	game->map.map = NULL;
+	game->map.map_width = 0;
+	game->map.map_height = 0;
+
+	game->map.tokens.player = 0;
+	game->map.tokens.exit = 0;
+	game->map.tokens.collectibles = 0;
+	game->map.tokens.enemies = 0;
+}
+
+// mlx_t	*ft_init_mlx(size_t img_width, size_t img_height)
+// {
+// 	mlx_t	*mlx;
+	
+// 	mlx = mlx_init(img_width, img_height, "SO_LONG - MA GAME", true);
+// 	if (!mlx)
+// 		return (perror("Error: Failed to initialize MLX42"), NULL);
+// 	return (mlx);
+// }
+
 int	main(void)
 {
 	mlx_t			*mlx;
 	mlx_image_t		*img;
 	mlx_texture_t	*texture;
-	char			**map;
+	t_game			game;
 	size_t			i;
 
-	mlx = mlx_init(img_width, img_height, "SO_LONG - MA GAME", true);
+	ft_initialize_game(&game);
+	
+	// mlx = ft_init_mlx(game.img_width, game.img_height);
+	mlx = mlx_init(game.img_width, game.img_height, "SO_LONG - MA GAME", true);
 	if (!mlx)
-		return (ft_printf("%s", "Error: Failed to initialize MLX42\n"));
+		return (perror("Error:Failed to initialize MLX42"), 1);
+
 	texture = mlx_load_png("textures/spacebackground.png");
 	if (!texture)
-		return (ft_printf("%s", "Error: Failed to load background\n"));
-	img = mlx_new_image(mlx, img_width, img_height);
+		return (mlx_terminate(mlx), perror("Error: Failed to load background"), 1);
+	img = mlx_new_image(mlx, game.img_width, game.img_height);
 	if (!img)
-		return (ft_printf("%s", "Error: Failed to create image\n"));
+	{
+		mlx_delete_texture(texture);
+		return (mlx_terminate(mlx), perror("Error: Failed to create image"), 1);
+	}
 
-	ft_add_background(img, texture);
-	mlx_image_to_window(mlx, img, 0, 0);
+	ft_add_background(&game, img, texture);
 	mlx_delete_texture(texture);
-
-	map = ft_read_map("map.ber");
-	if (!map)
-		return (mlx_terminate(mlx), perror("Error: Failed to read map file"), 1);
-
-	if (!ft_is_map_rectangular(map))
-		return (mlx_terminate(mlx), perror("Error: Map not rectangular"), 1);
-
-	if (!ft_is_map_enclosed(map))
-		return (mlx_terminate(mlx), perror("Error: Map not enclosed in walls"), 1);
-
-	if (!ft_do_components_exist(map))
-		return (mlx_terminate(mlx), perror("Error: Invalid map components"), 1);
+	
+	game.map.map = ft_read_map(&game, "map.ber");
+	if (!game.map.map)
+	return (mlx_terminate(mlx), perror("Error: Failed to read map file"), 1);
+	
+	if (!ft_is_map_rectangular(&game))
+	return (mlx_terminate(mlx), perror("Error: Map not rectangular"), 1);
+	
+	if (!ft_is_map_enclosed(&game))
+	return (mlx_terminate(mlx), perror("Error: Map not enclosed in walls"), 1);
+	
+	if (!ft_do_components_exist(&game))
+	return (mlx_terminate(mlx), perror("Error: Invalid map components"), 1);
 	
 	// Map reading and processing logic (validation, parsing, etc.)
 	i = 0;
-	while (map[i])
+	while (game.map.map[i])
 	{
-		ft_printf("%s\n", map[i]);
-		free(map[i]);
+		ft_printf("%s\n", game.map.map[i]);
 		i++;
 	}
-	free(map);
 	
-	mlx_loop_hook(mlx, ft_close_window, mlx);
-	mlx_close_hook(mlx, ft_close_window, mlx);
+	mlx_image_to_window(mlx, img, 0, 0);
+	mlx_loop_hook(mlx, ft_close_window, &game);
+	mlx_close_hook(mlx, ft_close_window, &game);
 	mlx_loop(mlx);
+	ft_free_resources(&game);
 	mlx_terminate(mlx);
 	return (0);
 }
@@ -73,42 +112,60 @@ int	main(void)
 // j * texture->height / IMG_HEIGHT → 100 * 200 / 400 = 50 → row 50 in the texture
 // i * texture->width / IMG_WIDTH → 100 * 200 / 400 = 50 → column 50 in the texture
 // So, the pixel drawn at (100, 100) in the window would come from (50, 50) in the texture.
-void	ft_add_background(mlx_image_t *img, mlx_texture_t *texture)
+void	ft_add_background(t_game *game, mlx_image_t *img, mlx_texture_t *texture)
 {
 	unsigned char	*pixel;
+	unsigned char	color;
 	size_t			i;
 	size_t			j;
 
 	i = 0;
-	while (i < img_width)
+	while (i < game->img_width)
 	{
 		j = 0;
-		while (j < img_height)
+		while (j < game->img_height)
 		{
 			pixel = texture->pixels
-				+ ((j * texture->height / img_height) * texture->width
-					+ (i * texture->width / img_width)) * texture->bytes_per_pixel;
-			mlx_put_pixel(img, i, j,
-				(pixel[0] << 24) | (pixel[1] << 16) | (pixel[2] << 8) | pixel[3]);
+			+ ((j * texture->height / game->img_height) * texture->width
+			+ (i * texture->width / game->img_width)) * texture->bytes_per_pixel;
+			color = (pixel[0] << 24) | (pixel[1] << 16) | (pixel[2] << 8) | pixel[3];
+			mlx_put_pixel(img, i, j, color);
 			j++;
 		}
 		i++;
 	}
 }
+// Frees all game resources before closing
+void	ft_free_resources(t_game *game)
+{
+	size_t	i;
+	
+	if (game->map.map)
+	{
+		i = 0;
+		while (game->map.map[i])
+		{
+			free(game->map.map[i]);
+			i++;
+		}
+		free(game->map.map);
+	}
+	if (game->player)
+		free(game->player);
+}
 
 // Handles closing the window (ESC key + "X" button)
 void	ft_close_window(void *key)
 {
-	mlx_t	*mlx;
+	t_game	*game;
 
-	mlx = (mlx_t *)key;
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(mlx);
+	game = (t_game *)key;
+	if (mlx_is_key_down(game->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(game->mlx);
 }
 
 
 // #include "so_long.h"
-
 // int	main(void)
 // {
 // 	mlx_t			*mlx;
@@ -135,8 +192,16 @@ void	ft_close_window(void *key)
 // 	if (!map)
 // 		return (mlx_terminate(mlx), perror("Error: Failed to read map file"), 1);
 
+// 	if (!ft_is_map_rectangular(map))
+// 		return (mlx_terminate(mlx), perror("Error: Map not rectangular"), 1);
+
+// 	if (!ft_is_map_enclosed(map))
+// 		return (mlx_terminate(mlx), perror("Error: Map not enclosed in walls"), 1);
+
+// 	if (!ft_do_components_exist(map))
+// 		return (mlx_terminate(mlx), perror("Error: Invalid map components"), 1);
+	
 // 	// Map reading and processing logic (validation, parsing, etc.)
-// 	// For example, you can print the map for now
 // 	i = 0;
 // 	while (map[i])
 // 	{
@@ -152,7 +217,6 @@ void	ft_close_window(void *key)
 // 	mlx_terminate(mlx);
 // 	return (0);
 // }
-
 // void	ft_add_background(mlx_image_t *img, mlx_texture_t *texture)
 // {
 // 	unsigned char	*pixel;
